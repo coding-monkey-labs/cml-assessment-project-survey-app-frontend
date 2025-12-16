@@ -1,0 +1,168 @@
+<div class="survey-list-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <div>
+        <h2 class="mb-1">Survey Management</h2>
+        <p class="text-muted mb-0">Manage and monitor all your surveys</p>
+      </div>
+      <button class="btn btn-primary" (click)="createNewSurvey()">
+        <i class="bi bi-plus-circle me-2"></i>Create New Survey
+      </button>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-primary">
+            <i class="bi bi-clipboard-data"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.total }}</h3>
+            <p>Total Surveys</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-success">
+            <i class="bi bi-check-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.active }}</h3>
+            <p>Active Surveys</p>
+          </div>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="stat-card">
+          <div class="stat-icon bg-secondary">
+            <i class="bi bi-pause-circle"></i>
+          </div>
+          <div class="stat-content">
+            <h3>{{ stats.inactive }}</h3>
+            <p>Inactive Surveys</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search Bar -->
+    <!-- AssessmentToDo #3: HTML TEMPLATE BUG
+         Issue: Search functionality doesn't work in real-time.
+         Users have to press Enter or click outside the input for search to trigger.
+         
+         Fix: Ensure search triggers on every keystroke for better UX.
+         
+         Hint: Check the event binding - is it using the correct event?
+         Expected: Search should filter results as user types. 
+    -->
+         
+    <div class="search-section mb-4">
+      <div class="input-group">
+        <span class="input-group-text">
+          <i class="bi bi-search"></i>
+        </span>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search surveys by title or description..."
+          (change)="onSearch($event)"
+          [value]="searchQuery"
+        />
+        <!-- BUG: Using (change) instead of (input) - search only triggers on blur! -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-3 text-muted">Loading surveys...</p>
+  </div>
+
+  <!-- Error State -->
+  <div *ngIf="error" class="alert alert-danger alert-dismissible fade show" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>{{ error }}
+    <button type="button" class="btn-close" (click)="error = null"></button>
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!loading && filteredSurveys.length === 0 && !searchQuery" class="empty-state">
+    <i class="bi bi-clipboard-x"></i>
+    <h3>No Surveys Yet</h3>
+    <p>Get started by creating your first survey</p>
+    <button class="btn btn-primary" (click)="createNewSurvey()">
+      <i class="bi bi-plus-circle me-2"></i>Create Survey
+    </button>
+  </div>
+
+  <!-- No Results State -->
+  <div *ngIf="!loading && filteredSurveys.length === 0 && searchQuery" class="empty-state">
+    <i class="bi bi-search"></i>
+    <h3>No Results Found</h3>
+    <p>No surveys match your search criteria</p>
+  </div>
+
+  <!-- Surveys Grid -->
+  <div *ngIf="!loading && filteredSurveys.length > 0" class="surveys-grid">
+    <div class="row">
+      <div class="col-lg-6 col-xl-4 mb-4" *ngFor="let survey of filteredSurveys">
+        <div class="survey-card">
+          <div class="survey-card-header">
+            <div class="d-flex justify-content-between align-items-start">
+              <h5 class="survey-title">{{ survey.title }}</h5>
+              <span [class]="getStatusBadgeClass(survey.isActive)">
+                {{ getStatusText(survey.isActive) }}
+              </span>
+            </div>
+            <p class="survey-description">{{ survey.description }}</p>
+          </div>
+
+          <div class="survey-card-body">
+            <div class="survey-meta">
+              <div class="meta-item">
+                <i class="bi bi-question-circle me-1"></i>
+                <span>{{ survey.questions.length }} Questions</span>
+              </div>
+              <div class="meta-item">
+                <i class="bi bi-calendar me-1"></i>
+                <span>{{ formatDate(survey.createdAt) }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="survey-card-footer">
+            <div class="btn-group w-100">
+              <button
+                class="btn btn-outline-primary btn-sm"
+                (click)="editSurvey(survey.id)"
+                title="Edit Survey"
+              >
+                <i class="bi bi-pencil me-1"></i>Edit
+              </button>
+              <button
+                class="btn btn-outline-secondary btn-sm"
+                (click)="toggleStatus(survey)"
+                [title]="survey.isActive ? 'Deactivate Survey' : 'Activate Survey'"
+              >
+                <i [class]="survey.isActive ? 'bi bi-pause me-1' : 'bi bi-play me-1'"></i>
+                {{ survey.isActive ? 'Deactivate' : 'Activate' }}
+              </button>
+              <button
+                class="btn btn-outline-danger btn-sm"
+                (click)="deleteSurvey(survey)"
+                title="Delete Survey"
+              >
+                <i class="bi bi-trash me-1"></i>Delete
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
