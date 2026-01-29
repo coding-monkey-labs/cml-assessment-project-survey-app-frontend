@@ -1,9 +1,12 @@
 import { Link, NavLink, Outlet } from 'react-router-dom'
-import { Brain, Home, Link2, FolderOpen, Star, Archive, Plus, Menu, X } from 'lucide-react'
+import { Brain, Home, Link2, FolderOpen, Star, Plus, Menu, X, LogOut, User } from 'lucide-react'
 import { useState } from 'react'
+import { useAuth } from '../hooks/useAuth'
 
 export default function Layout() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const [userMenuOpen, setUserMenuOpen] = useState(false)
+  const { user, logout } = useAuth()
 
   const navItems = [
     { to: '/', icon: Home, label: 'Dashboard', exact: true },
@@ -13,7 +16,7 @@ export default function Layout() {
   ]
 
   return (
-    <div className="min-h-screen gradient-memora-light">
+    <div className="min-h-screen gradient-memora-light flex flex-col">
       {/* Navigation */}
       <nav className="bg-white shadow-sm sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -51,7 +54,7 @@ export default function Layout() {
               ))}
             </div>
 
-            {/* Add Button */}
+            {/* Right side */}
             <div className="flex items-center gap-3">
               <Link
                 to="/add"
@@ -60,6 +63,50 @@ export default function Layout() {
                 <Plus className="w-4 h-4" />
                 Add Link
               </Link>
+
+              {/* User menu */}
+              <div className="relative">
+                <button
+                  onClick={() => setUserMenuOpen(!userMenuOpen)}
+                  className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 transition-all"
+                >
+                  <div className="w-8 h-8 bg-memora-100 rounded-full flex items-center justify-center">
+                    <User className="w-4 h-4 text-memora-600" />
+                  </div>
+                  <span className="hidden sm:block text-sm font-medium text-gray-700 max-w-[100px] truncate">
+                    {user?.name || user?.email?.split('@')[0]}
+                  </span>
+                </button>
+
+                {userMenuOpen && (
+                  <>
+                    <div
+                      className="fixed inset-0 z-10"
+                      onClick={() => setUserMenuOpen(false)}
+                    />
+                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border py-1 z-20">
+                      <div className="px-4 py-2 border-b">
+                        <p className="text-sm font-medium text-gray-900 truncate">
+                          {user?.name || 'User'}
+                        </p>
+                        <p className="text-xs text-gray-500 truncate">
+                          {user?.email}
+                        </p>
+                      </div>
+                      <button
+                        onClick={() => {
+                          setUserMenuOpen(false)
+                          logout()
+                        }}
+                        className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-all"
+                      >
+                        <LogOut className="w-4 h-4" />
+                        Sign out
+                      </button>
+                    </div>
+                  </>
+                )}
+              </div>
 
               {/* Mobile menu button */}
               <button
