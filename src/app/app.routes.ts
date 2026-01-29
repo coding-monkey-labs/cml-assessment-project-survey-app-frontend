@@ -1,44 +1,52 @@
 import { Routes } from '@angular/router';
-import { SurveyListComponent } from './components/survey-list/survey-list.component';
-import { SurveyBuilderComponent } from './components/survey-builder/survey-builder.component';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
+import { LinkListComponent } from './components/link-list/link-list.component';
+import { LinkFormComponent } from './components/link-form/link-form.component';
+import { CategoriesComponent } from './components/categories/categories.component';
+import { FavoritesComponent } from './components/favorites/favorites.component';
+import { ArchiveComponent } from './components/archive/archive.component';
 
 /**
- * Application Routes Configuration
- *
- * AssessmentToDo #4: ROUTING BUG
- * 
- * Issue: Clicking "Edit" on a survey doesn't load the survey data.
- * The edit page opens but shows a blank form instead of the survey details.
- * 
- * Fix: Ensure the route properly passes the survey ID to the component.
- * 
- * Hint: Check the edit route configuration - is it capturing the ID parameter?
- * Expected: Editing should load the survey with all its questions and details.
+ * LinkHive Application Routes
  */
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: '/surveys',
-    pathMatch: 'full'
+    component: DashboardComponent,
+    title: 'Dashboard | LinkHive'
   },
   {
-    path: 'surveys',
-    component: SurveyListComponent,
-    title: 'Survey List | Survey App'
+    path: 'links',
+    component: LinkListComponent,
+    title: 'All Links | LinkHive'
   },
   {
-    path: 'survey-builder',
-    component: SurveyBuilderComponent,
-    title: 'Create Survey | Survey App'
+    path: 'add',
+    component: LinkFormComponent,
+    title: 'Add Link | LinkHive'
   },
-  // BUG: Missing route parameter! Edit mode won't receive the survey ID.
   {
-    path: 'survey-builder',  // Should be 'survey-builder/:id'
-    component: SurveyBuilderComponent,
-    title: 'Edit Survey | Survey App'
+    path: 'edit/:id',
+    component: LinkFormComponent,
+    title: 'Edit Link | LinkHive'
+  },
+  {
+    path: 'categories',
+    component: CategoriesComponent,
+    title: 'Categories | LinkHive'
+  },
+  {
+    path: 'favorites',
+    component: FavoritesComponent,
+    title: 'Favorites | LinkHive'
+  },
+  {
+    path: 'archive',
+    component: ArchiveComponent,
+    title: 'Archive | LinkHive'
   },
   {
     path: '**',
-    redirectTo: '/surveys'
+    redirectTo: ''
   }
 ];
